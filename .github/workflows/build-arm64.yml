@@ -14,18 +14,15 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y gcc-aarch64-linux-gnu cmake make
+          sudo apt install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu make
 
-      - name: Configure and build Metamod-R
+      - name: Build with build.sh
         run: |
-          mkdir -p build
-          cd build
-          cmake .. -DCMAKE_SYSTEM_NAME=Linux -DCMAKE_SYSTEM_PROCESSOR=aarch64 \
-                   -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc
-          make
+          chmod +x build.sh
+          ./build.sh --compiler=gcc-aarch64-linux-gnu
 
-      - name: Upload metamod.so artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: metamod-arm64
-          path: build/metamod/metamod.so
+          path: build/*/*.so
