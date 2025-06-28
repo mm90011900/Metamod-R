@@ -1,10 +1,6 @@
 name: Build Metamod-R ARM64
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
   workflow_dispatch:
 
 jobs:
@@ -12,26 +8,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout source
         uses: actions/checkout@v3
 
-      - name: Fix apt sources.list to use jammy instead of noble
-        run: sudo sed -i 's/noble/jammy/g' /etc/apt/sources.list
-
-      - name: Update apt and install dependencies
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential cmake git
+          sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu cmake make
 
-      - name: Build project
+      - name: Configure and Build for ARM64
         run: |
           mkdir build
           cd build
-          cmake ..
+          cmake .. \
+            -DCMAKE_SYSTEM_NAME=Linux \
+            -DCMAKE_SYSTEM_PROCESSOR=aarch64 \
+            -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc \
+            -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++
           make
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: metamod-r-so-files
+          name: metamod-r-arm64
           path: build/*/*.so
