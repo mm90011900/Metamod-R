@@ -1,12 +1,10 @@
-name: Build Metamod-R
+name: Build Metamod-R ARM64
 
 on:
   push:
     branches:
-      - master
+      - master  # أو main حسب اسم فرعك
   pull_request:
-    branches:
-      - master
 
 jobs:
   build:
@@ -30,9 +28,11 @@ jobs:
           cd build
           cmake ..
           make
+          ls -l
+          find . -name "*.so"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: metamod-r-so-files
-          path: build/*/*.so
+          path: build/**/*.so
